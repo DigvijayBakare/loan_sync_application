@@ -8,39 +8,48 @@ import com.loansync.userservice.exception.UserNotFoundException;
 import com.loansync.userservice.repository.RolesRepository;
 import com.loansync.userservice.repository.UserRepository;
 import com.loansync.userservice.service.CustomUsersService;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Service
 public class CustomUsersServiceImpl implements CustomUsersService {
     private final UserRepository userRepository;
-    private final RegisterRequest request;
     private final RolesRepository rolesRepository;
 
-    public CustomUsersServiceImpl(UserRepository userRepository, RegisterRequest request, RolesRepository rolesRepository) {
+    public CustomUsersServiceImpl(UserRepository userRepository, RolesRepository rolesRepository) {
         this.userRepository = userRepository;
-        this.request = request;
         this.rolesRepository = rolesRepository;
     }
 
     // Create a user
     @Override
-    public Users createUser(RegisterRequest request) {
-        boolean existByEmail = userRepository.existByEmail(request.getEmail());
+    public RegisterRequest createUser(RegisterRequest request) {
+        boolean existsByEmail = userRepository.existsByEmail(request.getEmail());
 
-        if (existByEmail) {
+        if (existsByEmail) {
             throw new EmailAlreadyExistsException(request.getEmail());
         }
 
-        String roleName = (request.getRole() != null && !request.getRole().isBlank())
-                ? request.getRole().toUpperCase() : Role.Name.BORROWER.name();
+        Set<String> roleName = (request.getRole() != null && !request.getRole().isEmpty())
+                ? request.getRole().stream().map(String::toUpperCase).collect(Collectors.toSet()) : Set.of(Role.Name.BORROWER.name());
 
-        Role role = rolesRepository.findByName(roleName)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown role: " + roleName));
+        Set<Role.Name> roleEnum;
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        try {
+            roleEnum = roleName.stream().map(Role.Name::valueOf).collect(Collectors.toSet());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown role: " + roleName);
+        }
+
+        Set<Role> roles = roleEnum.stream()
+                .map(role -> rolesRepository.findByName(role)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException("Role not found: " + roleEnum)))
+                .collect(Collectors.toSet());
 
         Users user = Users.builder()
                 .email(request.getEmail()).password(request.getPassword()).firstName(request.getFirstName())
@@ -52,13 +61,12 @@ public class CustomUsersServiceImpl implements CustomUsersService {
                 .build();
 
         userRepository.save(user);
-
-        return user;
+        return request;
     }
 
     @Override
-    public List<Users> getAllUsers() {
-        return userRepository.getAllUsers();
+    public List<Users> findAll() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -68,17 +76,25 @@ public class CustomUsersServiceImpl implements CustomUsersService {
 
     @Override
     public Users updateUser (String username, RegisterRequest request) {
-        boolean existByEmail = userRepository.existByEmail(username);
+        boolean existByEmail = userRepository.existsByEmail(username);
         if (!existByEmail) throw new UserNotFoundException("User with username: " + username + "not available!");
 
-        String roleName = (request.getRole() != null && !request.getRole().isBlank())
-                ? request.getRole().toUpperCase() : Role.Name.BORROWER.name();
+        Set<String> roleName = (request.getRole() != null && !request.getRole().isEmpty())
+                ? request.getRole().stream().map(String::toUpperCase).collect(Collectors.toSet()) : Set.of(Role.Name.BORROWER.name());
 
-        Role role = rolesRepository.findByName(roleName)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown role: " + roleName));
+        Set<Role.Name> roleEnum;
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        try {
+            roleEnum = roleName.stream().map(Role.Name::valueOf).collect(Collectors.toSet());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown role: " + roleName);
+        }
+
+        Set<Role> roles = roleEnum.stream()
+                .map(role -> rolesRepository.findByName(role)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException("Role not found: " + roleEnum)))
+                .collect(Collectors.toSet());
 
         Users user = Users.builder()
                 .email(request.getEmail()).password(request.getPassword()).firstName(request.getFirstName())
@@ -96,7 +112,7 @@ public class CustomUsersServiceImpl implements CustomUsersService {
 
     @Override
     public void deleteUser(String username) {
-        boolean existByEmail = userRepository.existByEmail(username);
+        boolean existByEmail = userRepository.existsByEmail(username);
 
         userRepository.deleteByEmail(username);
     }

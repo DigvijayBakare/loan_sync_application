@@ -1,10 +1,13 @@
 package com.loansync.userservice.dto;
 
+import com.loansync.userservice.entity.Role;
 import lombok.Data;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.Set;
 
 @Data
 public class RegisterRequest {
@@ -25,6 +28,6 @@ public class RegisterRequest {
     private String phoneNumber;
 
     // SUPER_ADMIN, ADMIN, LENDER or BORROWER - defaults to BORROWER if omitted in the service layer
-    private String role;
+    private Set<String> role;
 }
 

@@ -5,13 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<Users, String> {
+public interface UserRepository extends JpaRepository<Users, UUID> {
+    // custom Spring Data JPA derived query method
+
     Optional<Users> findByEmail (String email);
 
-    boolean existByEmail(String email);
+    boolean existsByEmail(String email);
 
-    List<Users> getAllUsers();
+    List<Users> findAll();
 
     void deleteByEmail(String email);
 }

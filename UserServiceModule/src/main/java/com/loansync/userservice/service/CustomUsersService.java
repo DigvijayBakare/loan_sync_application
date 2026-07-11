@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface CustomUsersService {
     // Create user
-    Users createUser(RegisterRequest request);
+    RegisterRequest createUser(RegisterRequest request);
 
     // get all users
-    List<Users> getAllUsers();
+    List<Users> findAll();
 
     // get user by username
     Users getUser(String username);
