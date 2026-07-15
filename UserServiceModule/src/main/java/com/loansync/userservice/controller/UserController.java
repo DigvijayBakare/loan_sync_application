@@ -32,4 +32,22 @@ public class UserController {
         List<Users> usersList = usersService.findAll();
         return ResponseEntity.status(HttpStatus.FOUND).body(usersList);
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<Users> getUsersDetail(@PathVariable String username) {
+        Users user = usersService.getUser(username);
+        return ResponseEntity.status(HttpStatus.FOUND).body(user);
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<Users> updateUsersDetails (@PathVariable String username, @RequestBody RegisterRequest request) {
+        Users updatedUser = usersService.updateUser(username, request);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String username) {
+        usersService.deleteUser(username);
+        return ResponseEntity.status(HttpStatus.OK).body("User with username: " + username + " deleted successfully");
+    }
 }
