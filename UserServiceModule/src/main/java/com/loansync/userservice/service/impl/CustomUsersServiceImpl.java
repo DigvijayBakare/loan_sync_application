@@ -87,6 +87,10 @@ public class CustomUsersServiceImpl implements CustomUsersService {
     }
 
     private Set<Role> resolveRoles(Set<String> requestedRoles) {
+        if (requestedRoles == null || requestedRoles.isEmpty()) {
+            requestedRoles = Set.of(Role.Name.BORROWER.name());
+        }
+
         Set<Role.Name> roleEnum;
 
         try {
