@@ -1,7 +1,6 @@
 package com.loansync.userservice.controller;
 
 import com.loansync.userservice.security.CustomUserDetailsService;
-import com.loansync.userservice.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
