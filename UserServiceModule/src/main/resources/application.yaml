@@ -21,7 +21,7 @@ jwt:
   access-token-expiration-ms: 3600000      # 1 hr
   refresh-token-expiration-ms: 604800000  # 7 days
 
-
-# jwt.secret=abcdefghijklmnopqrstuvwxyz12345678901234567890
-# jwt.access-token-expiration-ms=3600000
-# jwt.refresh-token-expiration-ms=604800000
+## Logging - Level DEBUG
+logging:
+  level:
+    com.loansync: DEBUG
