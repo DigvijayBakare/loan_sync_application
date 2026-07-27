@@ -39,10 +39,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(PREFIX.length());
         String username = jwtService.extractUsername(token);
-        LOGGER.debug("Username from the JWT-Service: {}", username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            LOGGER.debug("Username: {}", username);
+            LOGGER.debug("Found the user! Validating ");
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(token, userDetails)) {

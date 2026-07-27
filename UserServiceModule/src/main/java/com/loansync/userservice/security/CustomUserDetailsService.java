@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LOGGER.debug("Username in CustomUserDetailsService: {}", username);
+        LOGGER.debug("CustomUserDetailsService: loadUserByUsername()");
         Optional<Users> user = userRepository.findByEmail(username);
         return user.map(UserPrincipal::new).orElseThrow(()->new UsernameNotFoundException("Invalid Username"));
     }

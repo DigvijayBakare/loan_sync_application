@@ -5,6 +5,7 @@ import com.loansync.userservice.dto.LoginRequest;
 import com.loansync.userservice.dto.RegisterRequest;
 import com.loansync.userservice.entity.Role;
 import com.loansync.userservice.entity.Users;
+import com.loansync.userservice.exception.EmailAlreadyExistsException;
 import com.loansync.userservice.exception.InvalidCredentialsException;
 import com.loansync.userservice.exception.UserNotFoundException;
 import com.loansync.userservice.repository.RolesRepository;
@@ -38,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse register(RegisterRequest request) {
         boolean existsByEmail = userRepository.existsByEmail(request.getEmail());
 
-        if (existsByEmail) throw new UserNotFoundException(request.getEmail());
+        if (existsByEmail) throw new EmailAlreadyExistsException("Username with email: " + request.getEmail() + " already present in the DB");
 
         Set<Role> roles = resolveRoles(request.getRole());
 
