@@ -12,8 +12,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate   # Hibernate now just checks entities match schema, doesn't alter it
     show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 ## Jwt configuration
 jwt:
