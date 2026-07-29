@@ -30,4 +30,17 @@ public class LoanApplicationResponse {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    public static LoanApplicationResponse fromEntity(LoanApplication application) {
+        return LoanApplicationResponse.builder()
+                .applicationId(application.getApplicationId())
+                .applicantId(application.getApplicantId())
+                .amount(application.getAmount())
+                .tenureMonths(application.getTenureMonths())
+                .purpose(application.getPurpose())
+                .status(application.getStatus())
+                .createdAt(application.getCreatedAt())
+                .updatedAt(application.getUpdatedAt())
+                .build();
+    }
 }
